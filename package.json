@@ -33,7 +33,7 @@
     "url": "https://github.com/createjs/easeljs.git"
   },
   "scripts": {
-		"test": "cd node_modules/@createjs/build && npm test",
+    "test": "cd node_modules/@createjs/build && npm test",
     "dev": "cd node_modules/@createjs/build && gulp dev --format=iife",
     "build": "cd node_modules/@createjs/build && gulp build",
     "docs": "cd node_modules/@createjs/docs && npm run gen"
@@ -44,11 +44,11 @@
   },
   "devDependencies": {
     "@createjs/build": "^2.0.0-beta.4",
-		"@createjs/docs": "^2.0.0-beta.4",
-    "canvas-prebuilt": "^1.6.5-prerelease.1"
+    "@createjs/docs": "^2.0.0-beta.4",
+    "canvas": "2.6.1"
   },
   "engine": "node >= 8.9.0",
-	"npmName": "easeljs",
+  "npmName": "easeljs",
   "npmFileMap": [
     {
       "basePath": "dist",

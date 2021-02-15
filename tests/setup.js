@@ -1,11 +1,11 @@
 // run the master setup file first
 require("@createjs/build/tests/setup");
 
-const Canvas = require("canvas-prebuilt");
+const Canvas = require("canvas");
 const { resolve } = require("path");
 const fs = require("fs");
 
-function toImageDataFromImage (image) {
+function toImageDataFromImage(image) {
 	let canvas = new Canvas();
 	let context = canvas.getContext("2d");
 	canvas.height = image.height;
@@ -14,12 +14,16 @@ function toImageDataFromImage (image) {
 	return context.getImageData(0, 0, canvas.height, image.height);
 }
 
-function toImageDataFromCanvas (canvas) {
-	return canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
+function toImageDataFromCanvas(canvas) {
+	return canvas
+		.getContext("2d")
+		.getImageData(0, 0, canvas.width, canvas.height);
 }
 
-function equal (a, b, tolerance = 0) {
-	if (a.height !== b.height || a.width !== b.width) { return false; }
+function equal(a, b, tolerance = 0) {
+	if (a.height !== b.height || a.width !== b.width) {
+		return false;
+	}
 	for (let i = a.length - 1; i >= 0; i--) {
 		if (a[i] !== b[i] && Math.abs(a[i] - b[i]) > tolerance) {
 			return false;
@@ -28,10 +32,13 @@ function equal (a, b, tolerance = 0) {
 	return true;
 }
 
-function getBuffer (data) {
+function getBuffer(data) {
 	let canvas = new Canvas();
 	canvas.getContext("2d").putImageData(data, 0, 0);
-	return new Buffer(canvas.toDataURL().replace(/^data:image\/\w+;base64,/,""), "base64");
+	return new Buffer(
+		canvas.toDataURL().replace(/^data:image\/\w+;base64,/, ""),
+		"base64"
+	);
 }
 
 module.exports = {
@@ -49,17 +56,25 @@ module.exports = {
 	 * @param {Canvas} canvas
 	 * @param {number} [pixelTolerance=0.005]
 	 */
-	compareBaseLine (path, done, expect, canvas, pixelTolerance = 0.005) {
+	compareBaseLine(path, done, expect, canvas, pixelTolerance = 0.005) {
 		const img = new Canvas.Image();
 		img.onload = () => {
 			console.log(canvas, img);
 			const canvasData = toImageDataFromCanvas(canvas);
 			const imageData = toImageDataFromImage(img);
-			const isEqual = equal(canvasData.data, imageData.data, img.height * img.width * pixelTolerance);
+			const isEqual = equal(
+				canvasData.data,
+				imageData.data,
+				img.height * img.width * pixelTolerance
+			);
 			if (!isEqual) {
 				let folder = `${this.rootPath}tests/debug/`;
 				fs.mkdir(folder, () => {
-					folder = `${folder}/${global[Object.getOwnPropertySymbols(global)[1]].state.currentTestName.replace(/(\s|\.)/, "-").replace("()", "")}/`;
+					folder = `${folder}/${global[
+						Object.getOwnPropertySymbols(global)[1]
+					].state.currentTestName
+						.replace(/(\s|\.)/, "-")
+						.replace("()", "")}/`;
 					fs.mkdir(folder, () => {
 						fs.writeFile(`${folder}/canvas.png`, getBuffer(canvasData), () => {
 							fs.writeFile(`${folder}/image.png`, getBuffer(imageData), () => {
@@ -76,10 +91,10 @@ module.exports = {
 		img.onerror = () => done(`${img.src} failed to load`);
 		img.src = path;
 	},
-	merge (dest, src) {
+	merge(dest, src) {
 		for (let n in src) {
 			dest[n] = src[n];
 		}
 		return dest;
-	}
+	},
 };

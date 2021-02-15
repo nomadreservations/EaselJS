@@ -29,28 +29,26 @@
  */
 
 import { EventDispatcher } from "@createjs/core";
-import Shadow from "./Shadow";
-import uid from "../utils/uid";
 import DisplayProps from "../geom/DisplayProps";
-import Rectangle from "../geom/Rectangle";
-import Point from "../geom/Point";
 import Matrix2D from "../geom/Matrix2D";
-import BitmapCache from "../filters/BitmapCache";
+import Point from "../geom/Point";
+import Rectangle from "../geom/Rectangle";
+import uid from "../utils/UID";
+import Shadow from "./Shadow";
 
- /**
-  * DisplayObject is an abstract class that should not be constructed directly. Instead construct subclasses such as
-  * {@link easeljs.Container}, {@link easeljs.Bitmap}, and {@link easeljs.Shape}.
-  * DisplayObject is the base class for all display classes in the EaselJS library. It defines the core properties and
-  * methods that are shared between all display objects, such as transformation properties (x, y, scaleX, scaleY, etc),
-  * caching, and mouse handlers.
-  *
-  * @memberof easeljs
-  * @extends core.EventDispatcher
-  */
- export default class DisplayObject extends EventDispatcher {
-
- 	constructor () {
- 		super();
+/**
+ * DisplayObject is an abstract class that should not be constructed directly. Instead construct subclasses such as
+ * {@link easeljs.Container}, {@link easeljs.Bitmap}, and {@link easeljs.Shape}.
+ * DisplayObject is the base class for all display classes in the EaselJS library. It defines the core properties and
+ * methods that are shared between all display objects, such as transformation properties (x, y, scaleX, scaleY, etc),
+ * caching, and mouse handlers.
+ *
+ * @memberof easeljs
+ * @extends core.EventDispatcher
+ */
+export default class DisplayObject extends EventDispatcher {
+	constructor() {
+		super();
 
 		/**
 		 * The alpha (transparency) for this display object. 0 is fully transparent, 1 is fully opaque.
@@ -317,11 +315,15 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @type {Stage}
 	 * @readonly
 	 */
-	get stage () {
+	get stage() {
 		// uses dynamic access to avoid circular dependencies;
 		let o = this;
-		while (o.parent) { o = o.parent; }
-		if (/^\[Stage(GL)?(\s\(name=\w+\))?\]$/.test(o.toString())) { return o; }
+		while (o.parent) {
+			o = o.parent;
+		}
+		if (/^\[Stage(GL)?(\s\(name=\w+\))?\]$/.test(o.toString())) {
+			return o;
+		}
 		return null;
 	}
 
@@ -342,7 +344,12 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas
 	 */
 	isVisible() {
-		return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0);
+		return !!(
+			this.visible &&
+			this.alpha > 0 &&
+			this.scaleX != 0 &&
+			this.scaleY != 0
+		);
 	}
 
 	/**
@@ -383,30 +390,35 @@ import BitmapCache from "../filters/BitmapCache";
 	 */
 	updateContext(ctx) {
 		const mask = this.mask,
-					mtx = this._props.matrix;
+			mtx = this._props.matrix;
 
 		if (mask && mask.graphics && !mask.graphics.isEmpty()) {
 			mask.getMatrix(mtx);
-			ctx.transform(mtx.a,  mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
+			ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
 
 			mask.graphics.drawAsPath(ctx);
 			ctx.clip();
 
 			mtx.invert();
-			ctx.transform(mtx.a,  mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
+			ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
 		}
 
 		this.getMatrix(mtx);
-		let tx = mtx.tx, ty = mtx.ty;
+		let tx = mtx.tx,
+			ty = mtx.ty;
 		if (DisplayObject._snapToPixelEnabled && this.snapToPixel) {
-			tx = tx + (tx < 0 ? -0.5 : 0.5) | 0;
-			ty = ty + (ty < 0 ? -0.5 : 0.5) | 0;
+			tx = (tx + (tx < 0 ? -0.5 : 0.5)) | 0;
+			ty = (ty + (ty < 0 ? -0.5 : 0.5)) | 0;
 		}
-		ctx.transform(mtx.a,  mtx.b, mtx.c, mtx.d, tx, ty);
+		ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, tx, ty);
 		ctx.globalAlpha *= this.alpha;
-		if (this.compositeOperation) { ctx.globalCompositeOperation = this.compositeOperation; }
-		if (this.shadow) { this._applyShadow(ctx, this.shadow); }
-	};
+		if (this.compositeOperation) {
+			ctx.globalCompositeOperation = this.compositeOperation;
+		}
+		if (this.shadow) {
+			this._applyShadow(ctx, this.shadow);
+		}
+	}
 
 	/**
 	 * Draws the display object into a new element, which is then used for subsequent draws. Intended for complex content
@@ -495,7 +507,9 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @return {String} The image data url for the cache.
 	 */
 	getCacheDataURL(type, encoderOptions) {
-		return this.bitmapCache ? this.bitmapCache.getCacheDataURL(type, encoderOptions) : null;
+		return this.bitmapCache
+			? this.bitmapCache.getCacheDataURL(type, encoderOptions)
+			: null;
 	}
 
 	/**
@@ -518,7 +532,11 @@ import BitmapCache from "../filters/BitmapCache";
 	 * on the stage.
 	 */
 	localToGlobal(x, y, pt = new Point()) {
-		return this.getConcatenatedMatrix(this._props.matrix).transformPoint(x, y, pt);
+		return this.getConcatenatedMatrix(this._props.matrix).transformPoint(
+			x,
+			y,
+			pt
+		);
 	}
 
 	/**
@@ -542,7 +560,9 @@ import BitmapCache from "../filters/BitmapCache";
 	 * display object's coordinate space.
 	 */
 	globalToLocal(x, y, pt = new Point()) {
-		return this.getConcatenatedMatrix(this._props.matrix).invert().transformPoint(x, y, pt);
+		return this.getConcatenatedMatrix(this._props.matrix)
+			.invert()
+			.transformPoint(x, y, pt);
 	}
 
 	/**
@@ -585,8 +605,18 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @param {Number} [regY=0] The vertical registration point in pixels
 	 * @return {easeljs.DisplayObject} Returns this instance. Useful for chaining commands.
 	 * @chainable
-	*/
-	setTransform(xOrParams = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0, skewX = 0, skewY = 0, regX = 0, regY = 0) {
+	 */
+	setTransform(
+		xOrParams = 0,
+		y = 0,
+		scaleX = 1,
+		scaleY = 1,
+		rotation = 0,
+		skewX = 0,
+		skewY = 0,
+		regX = 0,
+		regY = 0
+	) {
 		if (typeof x !== "number") {
 			this.set(xOrParams);
 		} else {
@@ -611,8 +641,20 @@ import BitmapCache from "../filters/BitmapCache";
 	 */
 	getMatrix(matrix = new Matrix2D()) {
 		const o = this;
-		return o.transformMatrix ? matrix.copy(o.transformMatrix) :
-			(matrix.identity() && matrix.appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY));
+		return o.transformMatrix
+			? matrix.copy(o.transformMatrix)
+			: matrix.identity() &&
+					matrix.appendTransform(
+						o.x,
+						o.y,
+						o.scaleX,
+						o.scaleY,
+						o.rotation,
+						o.skewX,
+						o.skewY,
+						o.regX,
+						o.regY
+					);
 	}
 
 	/**
@@ -627,7 +669,7 @@ import BitmapCache from "../filters/BitmapCache";
 	getConcatenatedMatrix(matrix = new Matrix2D()) {
 		const mtx = this.getMatrix(matrix);
 		let o;
-		while (o = o.parent) {
+		while ((o = o.parent)) {
 			mtx.prependMatrix(o.getMatrix(o._props.matrix));
 		}
 		return mtx;
@@ -648,8 +690,10 @@ import BitmapCache from "../filters/BitmapCache";
 			props.prepend(o.visible, o.alpha, o.shadow, o.compositeOperation);
 			// we do this to avoid problems with the matrix being used for both operations when o._props.matrix is passed in as the props param.
 			// this could be simplified (ie. just done as part of the prepend above) if we switched to using a pool.
-			if (o != this) { mtx.prependMatrix(o.getMatrix(o._props.matrix)); }
-		} while (o = o.parent);
+			if (o != this) {
+				mtx.prependMatrix(o.getMatrix(o._props.matrix));
+			}
+		} while ((o = o.parent));
 		return props;
 	}
 
@@ -668,12 +712,18 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @param {Number} y The y position to check in the display object's local coordinates.
 	 * @return {Boolean} A Boolean indicating whether a visible portion of the DisplayObject intersect the specified
 	 * local Point.
-	*/
+	 */
 	hitTest(x, y) {
 		const ctx = DisplayObject._hitTestContext;
 		ctx.setTransform(1, 0, 0, 1, -x, -y);
 		// hit tests occur in a 2D context, so don't attempt to draw a GL only Texture into a 2D context
-		this.draw(ctx, !(this.bitmapCache && !(this.bitmapCache._cacheCanvas instanceof WebGLTexture)));
+		this.draw(
+			ctx,
+			!(
+				this.bitmapCache &&
+				!(this.bitmapCache._cacheCanvas instanceof WebGLTexture)
+			)
+		);
 		const hit = this._testHit(ctx);
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
 		ctx.clearRect(0, 0, 2, 2);
@@ -690,9 +740,11 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @param {Object} props A generic object containing properties to copy to the DisplayObject instance.
 	 * @return {easeljs.DisplayObject} Returns the instance the method is called on (useful for chaining calls.)
 	 * @chainable
-	*/
+	 */
 	set(props) {
-		for (var n in props) { this[n] = props[n]; }
+		for (var n in props) {
+			this[n] = props[n];
+		}
 		return this;
 	}
 
@@ -731,7 +783,7 @@ import BitmapCache from "../filters/BitmapCache";
 	 * 		Returns approximate bounds. Values will be more accurate if spritesheet frame registration points are close
 	 * 		to (x=0,y=0).
 	 * 	</td></tr>
-	* </table>
+	 * </table>
 	 *
 	 * @example <caption>Bounds can be expensive to calculate for some objects (ex. text, or containers with many children), and
 	 * are recalculated each time you call getBounds(). You can prevent recalculation on static objects by setting the
@@ -752,7 +804,9 @@ import BitmapCache from "../filters/BitmapCache";
 	 * object.
 	 */
 	getBounds() {
-		if (this._bounds) { return this._rectangle.copy(this._bounds); }
+		if (this._bounds) {
+			return this._rectangle.copy(this._bounds);
+		}
 		const cache = this.bitmapCache;
 		if (cache && this.cacheCanvas) {
 			return cache.getBounds();
@@ -795,7 +849,12 @@ import BitmapCache from "../filters/BitmapCache";
 			this._bounds = x;
 			return;
 		}
-		this._bounds = (this._bounds || new Rectangle()).setValues(x, y, width, height);
+		this._bounds = (this._bounds || new Rectangle()).setValues(
+			x,
+			y,
+			width,
+			height
+		);
 	}
 
 	/**
@@ -849,7 +908,7 @@ import BitmapCache from "../filters/BitmapCache";
 		o.skewX = this.skewX;
 		o.skewY = this.skewY;
 		o.visible = this.visible;
-		o.x  = this.x;
+		o.x = this.x;
 		o.y = this.y;
 		o.compositeOperation = this.compositeOperation;
 		o.snapToPixel = this.snapToPixel;
@@ -912,7 +971,7 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @return {easeljs.Rectangle}
 	 * @protected
 	 */
-	_getBounds(matrix, ignoreTransform){
+	_getBounds(matrix, ignoreTransform) {
 		return this._transformBounds(this.getBounds(), matrix, ignoreTransform);
 	}
 
@@ -924,33 +983,65 @@ import BitmapCache from "../filters/BitmapCache";
 	 * @protected
 	 */
 	_transformBounds(bounds, matrix, ignoreTransform) {
-		if (!bounds) { return bounds; }
+		if (!bounds) {
+			return bounds;
+		}
 		let { x, y } = bounds;
 		const { width, height } = bounds;
-		const mtx = ignoreTransform ? this._props.matrix.identity() : this.getMatrix(this._props.matrix);
+		const mtx = ignoreTransform
+			? this._props.matrix.identity()
+			: this.getMatrix(this._props.matrix);
 
-		if (x || y) { mtx.appendTransform(0, 0, 1, 1, 0, 0, 0, -x, -y); } // TODO: simplify this.
-		if (matrix) { mtx.prependMatrix(matrix); }
+		if (x || y) {
+			mtx.appendTransform(0, 0, 1, 1, 0, 0, 0, -x, -y);
+		} // TODO: simplify this.
+		if (matrix) {
+			mtx.prependMatrix(matrix);
+		}
 
-		const x_a = width*mtx.a,
-					x_b = width*mtx.b,
-					y_c = height*mtx.c,
-					y_d = height*mtx.d,
-					tx = mtx.tx,
-					ty = mtx.ty;
+		const x_a = width * mtx.a,
+			x_b = width * mtx.b,
+			y_c = height * mtx.c,
+			y_d = height * mtx.d,
+			tx = mtx.tx,
+			ty = mtx.ty;
 
 		let minX = tx,
-				maxX = tx,
-				minY = ty,
-				maxY = ty;
+			maxX = tx,
+			minY = ty,
+			maxY = ty;
 
-		if ((x = x_a + tx) < minX) { minX = x; } else if (x > maxX) { maxX = x; }
-		if ((x = x_a + y_c + tx) < minX) { minX = x; } else if (x > maxX) { maxX = x; }
-		if ((x = y_c + tx) < minX) { minX = x; } else if (x > maxX) { maxX = x; }
+		if ((x = x_a + tx) < minX) {
+			minX = x;
+		} else if (x > maxX) {
+			maxX = x;
+		}
+		if ((x = x_a + y_c + tx) < minX) {
+			minX = x;
+		} else if (x > maxX) {
+			maxX = x;
+		}
+		if ((x = y_c + tx) < minX) {
+			minX = x;
+		} else if (x > maxX) {
+			maxX = x;
+		}
 
-		if ((y = x_b + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
-		if ((y = x_b + y_d + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
-		if ((y = y_d + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
+		if ((y = x_b + ty) < minY) {
+			minY = y;
+		} else if (y > maxY) {
+			maxY = y;
+		}
+		if ((y = x_b + y_d + ty) < minY) {
+			minY = y;
+		} else if (y > maxY) {
+			maxY = y;
+		}
+		if ((y = y_d + ty) < minY) {
+			minY = y;
+		} else if (y > maxY) {
+			maxY = y;
+		}
 
 		return bounds.setValues(minX, minY, maxX - minX, maxY - minY);
 	}
@@ -963,11 +1054,12 @@ import BitmapCache from "../filters/BitmapCache";
 	_hasMouseEventListener() {
 		const evts = DisplayObject._MOUSE_EVENTS;
 		for (let i = 0, l = evts.length; i < l; i++) {
-			if (this.hasEventListener(evts[i])) { return true; }
+			if (this.hasEventListener(evts[i])) {
+				return true;
+			}
 		}
 		return !!this.cursor;
 	}
-
 }
 
 /**
@@ -976,7 +1068,17 @@ import BitmapCache from "../filters/BitmapCache";
  * @static
  * @type {Array}
  */
-DisplayObject._MOUSE_EVENTS = ["click","dblclick","mousedown","mouseout","mouseover","pressmove","pressup","rollout","rollover"];
+DisplayObject._MOUSE_EVENTS = [
+	"click",
+	"dblclick",
+	"mousedown",
+	"mouseout",
+	"mouseover",
+	"pressmove",
+	"pressup",
+	"rollout",
+	"rollover",
+];
 
 /**
  * Suppresses errors generated when using features like hitTest, mouse events, and {@link easeljs.Container#getObjectsUnderPoint}

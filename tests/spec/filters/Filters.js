@@ -1,20 +1,18 @@
+import Canvas from "canvas";
 import Bitmap from "../../../src/display/Bitmap";
 import Container from "../../../src/display/Container";
 import Shadow from "../../../src/display/Shadow";
 import Shape from "../../../src/display/Shape";
 import Stage from "../../../src/display/Stage";
-import AlphaMaskFilter from "../../../src/filters/AlphaMaskFilter";
 import AlphaMapFilter from "../../../src/filters/AlphaMapFilter";
+import AlphaMaskFilter from "../../../src/filters/AlphaMaskFilter";
 import BlurFilter from "../../../src/filters/BlurFilter";
 import ColorFilter from "../../../src/filters/ColorFilter";
 import ColorMatrix from "../../../src/filters/ColorMatrix";
 import ColorMatrixFilter from "../../../src/filters/ColorMatrixFilter";
-
 import globals from "../../setup";
-import Canvas from "canvas-prebuilt";
 
 describe("Filters", () => {
-
 	let stage, canvas, image;
 
 	beforeEach(async (done) => {
@@ -23,12 +21,16 @@ describe("Filters", () => {
 		stage = new Stage(canvas);
 
 		image = new Canvas.Image();
-		image.onload = () => { done(); }
-		image.onerror = () => { done(`${image.src} failed to load`); }
+		image.onload = () => {
+			done();
+		};
+		image.onerror = () => {
+			done(`${image.src} failed to load`);
+		};
 		image.src = `${globals.rootPath}assets/art/daisy.png`;
 	});
 
-	it("AlphaMaskFilter", done => {
+	it("AlphaMaskFilter", (done) => {
 		let width = image.width;
 		let height = image.height;
 
@@ -36,7 +38,14 @@ describe("Filters", () => {
 
 		let maskShape = new Shape();
 		let g = maskShape.graphics;
-		g.beginLinearGradientFill(["rgba(255,255,255,1)", "rgba(255,255,255,0)"], [0, 1], 0, 0, 0, 35)
+		g.beginLinearGradientFill(
+			["rgba(255,255,255,1)", "rgba(255,255,255,0)"],
+			[0, 1],
+			0,
+			0,
+			0,
+			35
+		);
 		g.drawRect(0, 0, width, height);
 		g.endFill();
 
@@ -48,12 +57,17 @@ describe("Filters", () => {
 		stage.addChild(bmp2);
 
 		stage.update();
-		globals.compareBaseLine(globals.rootPath + "tests/assets/AlphaMaskFilter.png", done, expect, .01);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/AlphaMaskFilter.png",
+			done,
+			expect,
+			0.01
+		);
 
 		expect(amf.clone().mask).toBe(maskShape.cacheCanvas);
 	});
 
-	it("AlphaMapFilter", done => {
+	it("AlphaMapFilter", (done) => {
 		let width = image.width;
 		let height = image.height;
 
@@ -61,7 +75,14 @@ describe("Filters", () => {
 
 		let maskShape = new Shape();
 		let g = maskShape.graphics;
-		g.beginLinearGradientFill(["rgba(255,255,255,1)", "rgba(255,255,255,0)"], [0, 1], 0, 0, 0, 100)
+		g.beginLinearGradientFill(
+			["rgba(255,255,255,1)", "rgba(255,255,255,0)"],
+			[0, 1],
+			0,
+			0,
+			0,
+			100
+		);
 		g.drawRect(0, 0, width, height);
 		g.endFill();
 
@@ -72,12 +93,17 @@ describe("Filters", () => {
 		bmp2.cache(0, 0, width, height);
 		stage.addChild(bmp2);
 
-		globals.compareBaseLine(globals.rootPath + "tests/assets/AlphaMapFilter.png", done, expect, canvas);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/AlphaMapFilter.png",
+			done,
+			expect,
+			canvas
+		);
 
 		expect(amf.clone().alphaMap).toBe(maskShape.cacheCanvas);
 	});
 
-	it("BlurFilter", done => {
+	it("BlurFilter", (done) => {
 		let shape = new Shape();
 		shape.graphics.beginFill("#ff0000").drawCircle(50, 75, 25);
 
@@ -89,7 +115,13 @@ describe("Filters", () => {
 
 		shape.cache(0, 0, 100, 100);
 
-		globals.compareBaseLine(globals.rootPath + "tests/assets/BlurFilter.png", done, expect, canvas, 0.01);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/BlurFilter.png",
+			done,
+			expect,
+			canvas,
+			0.01
+		);
 
 		let blurClone = blurFilter.clone();
 		expect(blurClone.blurX).toBe(blurFilter.blurX);
@@ -97,8 +129,8 @@ describe("Filters", () => {
 		expect(blurClone.quality).toBe(blurFilter.quality);
 	});
 
-	it("ColorFilter() shape should be blue", done => {
-		let shape = new Shape().set({x: 10, y: 10});
+	it("ColorFilter() shape should be blue", (done) => {
+		let shape = new Shape().set({ x: 10, y: 10 });
 		shape.graphics.beginFill("#ff0000").drawCircle(50, 60, 25);
 
 		let cf = new ColorFilter(0, 0, 0, 1, 0, 0, 255, 0);
@@ -108,7 +140,13 @@ describe("Filters", () => {
 		shape.cache(0, 0, 100, 100);
 		stage.addChild(shape);
 
-		globals.compareBaseLine(globals.rootPath + "tests/assets/ColorFilter.png", done, expect, canvas, 0.01);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/ColorFilter.png",
+			done,
+			expect,
+			canvas,
+			0.01
+		);
 
 		let colorFilterClone = cf.clone();
 
@@ -122,8 +160,8 @@ describe("Filters", () => {
 		expect(colorFilterClone.alphaOffset).toBe(cf.alphaOffset);
 	});
 
-	it("ColorMatrixFilter()", done => {
-		let bmp = new Bitmap(image).set({x: 25, y: 25});
+	it("ColorMatrixFilter()", (done) => {
+		let bmp = new Bitmap(image).set({ x: 25, y: 25 });
 
 		let matrix = new ColorMatrix().adjustHue(180).adjustSaturation(100);
 		let cmf = new ColorMatrixFilter(matrix);
@@ -133,17 +171,22 @@ describe("Filters", () => {
 
 		stage.addChild(bmp);
 
-		globals.compareBaseLine(globals.rootPath + "tests/assets/ColorMatrixFilter.png", done, expect, canvas);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/ColorMatrixFilter.png",
+			done,
+			expect,
+			canvas
+		);
 
 		let clone = cmf.clone().matrix.toArray();
-		let orig = cmf.matrix.toArray()
+		let orig = cmf.matrix.toArray();
 
 		for (let i = 0; i < orig.length; i++) {
 			expect(clone[i]).toBe(orig[i]);
 		}
 	});
 
-	it("Shadow", done => {
+	it("Shadow", (done) => {
 		let c = new Container();
 		let g = c.addChild(new Shape()).graphics;
 		g.beginFill("#ff0000").drawRect(10, 10, 100, 100);
@@ -151,7 +194,11 @@ describe("Filters", () => {
 
 		stage.addChild(c);
 
-		globals.compareBaseLine(globals.rootPath + "tests/assets/Shadow.png", done, expect, canvas);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/Shadow.png",
+			done,
+			expect,
+			canvas
+		);
 	});
-
 });

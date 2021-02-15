@@ -1,16 +1,13 @@
+import { Ticker } from "@createjs/core/src/utils/Ticker";
+import { Tween } from "@createjs/tweenjs/src/Tween";
+import Canvas from "canvas";
 import MovieClip from "../../../src/display/MovieClip";
 import Shape from "../../../src/display/Shape";
 import Stage from "../../../src/display/Stage";
-
-import { Tween } from "@createjs/tweenjs/src/Tween";
-import { Ticker } from "@createjs/core/src/utils/Ticker";
-
 import globals from "../../setup";
-import Canvas from "canvas-prebuilt";
 
 // skip movieclip tests, MC plugin is incomplete
 describe.skip("MovieClip", () => {
-
 	let stage, canvas, mc;
 
 	beforeEach(() => {
@@ -20,8 +17,8 @@ describe.skip("MovieClip", () => {
 		mc = new MovieClip({
 			labels: {
 				start: 24,
-				end: 0
-			}
+				end: 0,
+			},
 		});
 		stage.addChild(mc);
 
@@ -31,9 +28,13 @@ describe.skip("MovieClip", () => {
 		let child2 = new Shape();
 		child2.graphics.beginFill("#5a9cfb").drawCircle(30, 30, 30);
 
-		mc.timeline.addTween(Tween.get(child1).to({x: 0}).to({x: 60}, 50).to({x: 0}, 50));
-		mc.timeline.addTween(Tween.get(child2).to({x: 60}).to({x: 0}, 50).to({x: 60}, 50));
-		mc.timeline.labels = {start: "startLbl", end: "endLbl"};
+		mc.timeline.addTween(
+			Tween.get(child1).to({ x: 0 }).to({ x: 60 }, 50).to({ x: 0 }, 50)
+		);
+		mc.timeline.addTween(
+			Tween.get(child2).to({ x: 60 }).to({ x: 0 }, 50).to({ x: 60 }, 50)
+		);
+		mc.timeline.labels = { start: "startLbl", end: "endLbl" };
 	});
 
 	it("getCurrentLabel", () => {
@@ -47,19 +48,19 @@ describe.skip("MovieClip", () => {
 		expect(lbls[0].position).toBe("startLbl");
 	});
 
-	it("gotoAndPlay", done => {
+	it("gotoAndPlay", (done) => {
 		mc.gotoAndPlay("start");
 
-		globals.compareBaseLine("test_assets/gotoAndPlay.png", done, expect, .01);
+		globals.compareBaseLine("test_assets/gotoAndPlay.png", done, expect, 0.01);
 	});
 
-	it("gotoAndStop", done => {
+	it("gotoAndStop", (done) => {
 		mc.gotoAndStop("end");
 
-		globals.compareBaseLine("test_assets/gotoAndStop.png", done, expect, .01);
+		globals.compareBaseLine("test_assets/gotoAndStop.png", done, expect, 0.01);
 	});
 
-	it("play", done => {
+	it("play", (done) => {
 		mc.play();
 
 		// Manually move the playhead forward a few frames.
@@ -67,10 +68,10 @@ describe.skip("MovieClip", () => {
 			stage.update();
 		}
 
-		globals.compareBaseLine("test_assets/play.png", done, expect, .01);
+		globals.compareBaseLine("test_assets/play.png", done, expect, 0.01);
 	});
 
-	it("stop", done => {
+	it("stop", (done) => {
 		mc.play();
 		Ticker.addEventListener("tick", stage);
 

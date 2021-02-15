@@ -1,3 +1,4 @@
+import Canvas from "canvas";
 import Bitmap from "../../../src/display/Bitmap";
 import BitmapText from "../../../src/display/BitmapText";
 import Container from "../../../src/display/Container";
@@ -8,15 +9,13 @@ import Sprite from "../../../src/display/Sprite";
 import SpriteSheet from "../../../src/display/SpriteSheet";
 import Stage from "../../../src/display/Stage";
 import Text from "../../../src/display/Text";
-import Rectangle from "../../../src/geom/Rectangle";
 import BlurFilter from "../../../src/filters/BlurFilter";
 import ColorMatrix from "../../../src/filters/ColorMatrix";
 import ColorMatrixFilter from "../../../src/filters/ColorMatrixFilter";
-
+import Rectangle from "../../../src/geom/Rectangle";
 import globals from "../../setup";
-import Canvas from "canvas-prebuilt";
 
-function createShapeRect (x, y, w, h, fColor) {
+function createShapeRect(x, y, w, h, fColor) {
 	const shape = new Shape();
 	const g = shape.graphics;
 	g.ss(1).s(globals.sColor).f(fColor).dr(x, y, w, h).ef();
@@ -24,7 +23,6 @@ function createShapeRect (x, y, w, h, fColor) {
 }
 
 describe("DisplayList", () => {
-
 	let stage, canvas, image, displayObjectProps, bitmapProps;
 
 	beforeEach(async (done) => {
@@ -33,13 +31,17 @@ describe("DisplayList", () => {
 		stage = new Stage(canvas);
 
 		image = new Canvas.Image();
-		image.onload = () => { done(); }
-		image.onerror = () => { done(`${image.src} failed to load`); }
+		image.onload = () => {
+			done();
+		};
+		image.onerror = () => {
+			done(`${image.src} failed to load`);
+		};
 		image.src = `${globals.rootPath}assets/art/daisy.png`;
 
 		// Used to test clone() and set() operations
 		displayObjectProps = {
-			alpha: .5,
+			alpha: 0.5,
 			name: "foo",
 			regX: 1,
 			regY: 2,
@@ -53,7 +55,7 @@ describe("DisplayList", () => {
 			x: 5,
 			y: 6,
 			mouseEnabled: true,
-			compositeOperation: "copy"
+			compositeOperation: "copy",
 		};
 
 		bitmapProps = { sourceRect: new Rectangle(1, 2, 3, 4) };
@@ -63,11 +65,10 @@ describe("DisplayList", () => {
 	});
 
 	afterEach(() => {
-		stage, image, displayObjectProps, bitmapProps = null;
-	})
+		stage, image, displayObjectProps, (bitmapProps = null);
+	});
 
 	describe("Stage", () => {
-
 		it("addChild() should work", () => {
 			const child = new Container();
 			stage.addChild(child);
@@ -126,11 +127,9 @@ describe("DisplayList", () => {
 		it("stage.stage should eq stage.", () => {
 			expect(stage.stage).toBe(stage);
 		});
-
 	});
 
 	describe("*.clone() should work", () => {
-
 		it("Bitmap.clone();", () => {
 			let bmp = new Bitmap(image).set(bitmapProps);
 			let clone = bmp.clone();
@@ -159,13 +158,16 @@ describe("DisplayList", () => {
 		});
 
 		it("Sprite.clone();", () => {
-			let props = globals.merge({
-									   currentFrame: 1,
-									   currentAnimation: "foo",
-									   paused: true,
-									   currentAnimationFrame: 2,
-									   framerate: 3
-								   }, displayObjectProps);
+			let props = globals.merge(
+				{
+					currentFrame: 1,
+					currentAnimation: "foo",
+					paused: true,
+					currentAnimationFrame: 2,
+					framerate: 3,
+				},
+				displayObjectProps
+			);
 			let obj = new Sprite().set(props);
 			let clone = obj.clone();
 
@@ -212,11 +214,14 @@ describe("DisplayList", () => {
 		});
 
 		it("BitmapText.clone();", () => {
-			let props = globals.merge({
-									   lineHeight: 4,
-									   letterSpacing: 5,
-									   spaceWidth: 6
-								   }, displayObjectProps);
+			let props = globals.merge(
+				{
+					lineHeight: 4,
+					letterSpacing: 5,
+					spaceWidth: 6,
+				},
+				displayObjectProps
+			);
 			let obj = new BitmapText().set(props);
 			let clone = obj.clone();
 
@@ -226,17 +231,20 @@ describe("DisplayList", () => {
 		});
 
 		it("Text.clone();", () => {
-			let props = globals.merge({
-									   text: "foo bar",
-									   font: "Arial",
-									   color: "rgba(255,0,255, 5)",
-									   textAlign: "right",
-									   textBaseline: "hanging",
-									   maxWidth: 5,
-									   outline: 1,
-									   lineHeight: 6,
-									   lineWidth: 7
-								   }, displayObjectProps);
+			let props = globals.merge(
+				{
+					text: "foo bar",
+					font: "Arial",
+					color: "rgba(255,0,255, 5)",
+					textAlign: "right",
+					textBaseline: "hanging",
+					maxWidth: 5,
+					outline: 1,
+					lineHeight: 6,
+					lineWidth: 7,
+				},
+				displayObjectProps
+			);
 			let obj = new Text().set(props);
 			let clone = obj.clone();
 
@@ -307,10 +315,10 @@ describe("DisplayList", () => {
 					let o = 0;
 					let oi = 20;
 					rect1 = createShapeRect(o, o, wh, wh, "#ffcc88");
-					rect2 = createShapeRect(o += oi, o, wh, wh, "#ccccee");
-					rect3 = createShapeRect(o += oi, o, wh, wh, "#ccccee");
-					rect4 = createShapeRect(o += oi, o, wh, wh, globals.fColor);
-					rect5 = createShapeRect(o += oi, o, wh, wh, globals.fColor);
+					rect2 = createShapeRect((o += oi), o, wh, wh, "#ccccee");
+					rect3 = createShapeRect((o += oi), o, wh, wh, "#ccccee");
+					rect4 = createShapeRect((o += oi), o, wh, wh, globals.fColor);
+					rect5 = createShapeRect((o += oi), o, wh, wh, globals.fColor);
 					mask = createShapeRect(0, 0, 15, 15, globals.fColor);
 				});
 
@@ -387,8 +395,7 @@ describe("DisplayList", () => {
 			});
 
 			it("mode=2 should return objects with mouseEvents and mouseEnabled==true.", () => {
-				rect2.addEventListener("click", () => {
-				});
+				rect2.addEventListener("click", () => {});
 				rect2.mouseEnabled = false;
 				rect3.mouseEnabled = false;
 				rect4.mouseEnabled = false;
@@ -445,13 +452,13 @@ describe("DisplayList", () => {
 
 	it("localToGlobal() should work on nested containers.", () => {
 		let c = new Container();
-		c.set({x:50, y:50});
+		c.set({ x: 50, y: 50 });
 
 		let c2 = new Container();
-		c2.set({x:25, y:25});
+		c2.set({ x: 25, y: 25 });
 
 		let c3 = new Container();
-		c3.set({x:-5, y:-5});
+		c3.set({ x: -5, y: -5 });
 
 		c.addChild(c2);
 		c2.addChild(c3);
@@ -527,13 +534,13 @@ describe("DisplayList", () => {
 				return 1;
 			}
 			return 0;
-		}
+		};
 
 		let container = new Container();
 
-		let foo = new Shape().set({y: 80});
-		let bar = new Shape().set({y: 45});
-		let ja = new Shape().set({y: 150});
+		let foo = new Shape().set({ y: 80 });
+		let bar = new Shape().set({ y: 45 });
+		let ja = new Shape().set({ y: 150 });
 
 		container.addChild(ja, bar, foo);
 		expect(container.getChildIndex(ja)).toBe(0);
@@ -574,12 +581,17 @@ describe("DisplayList", () => {
 		expect(container.getChildIndex(bars)).toBe(0);
 	});
 
-	it("toDataURL() should return a valid image.", done => {
+	it("toDataURL() should return a valid image.", (done) => {
 		let url = stage.toDataURL("#ffffff");
 
 		let img = new Canvas.Image();
-		img.onload = () => { expect(url).not.toBe(null); done(); }
-		img.onerror = () => { done(`${url} failed to load`); }
+		img.onload = () => {
+			expect(url).not.toBe(null);
+			done();
+		};
+		img.onerror = () => {
+			done(`${url} failed to load`);
+		};
 		img.src = url;
 	});
 
@@ -602,16 +614,23 @@ describe("DisplayList", () => {
 		expect(err).toBe(true);
 	});
 
-	it("Text", done => {
+	it("Text", (done) => {
 		let txt = new Text("", "12px Arial", "#dd0000");
-		txt.text = "This text is rendered in canvas.\n\nusing the Text Object.!\n\nTEST!\n\nmore text";
+		txt.text =
+			"This text is rendered in canvas.\n\nusing the Text Object.!\n\nTEST!\n\nmore text";
 		txt.textBaseline = "top";
 		txt.textAlign = "left";
 		txt.y = 0;
 		txt.x = 0;
 		stage.addChild(txt);
 		stage.update();
-		globals.compareBaseLine(globals.rootPath + "tests/assets/Text.png", done, expect, canvas, 0.01);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/Text.png",
+			done,
+			expect,
+			canvas,
+			0.01
+		);
 	});
 
 	it("Text.getBounds() should allow 0 as a value", () => {
@@ -622,42 +641,42 @@ describe("DisplayList", () => {
 		expect(txt.getBounds()).not.toBe(null);
 	});
 
-	it("BitmapText", done => {
+	it("BitmapText", (done) => {
 		// Embedded SpriteSheet data.
 		const data = {
-			"animations": {
-				"V": {"frames": [21]},
-				"A": {"frames": [0]},
-				",": {"frames": [26]},
-				"W": {"frames": [22]},
-				"B": {"frames": [1]},
-				"X": {"frames": [23]},
-				"C": {"frames": [2]},
-				".": {"frames": [29]},
-				"Y": {"frames": [24]},
-				"D": {"frames": [3]},
-				"Z": {"frames": [25]},
-				"E": {"frames": [4]},
-				"F": {"frames": [5]},
-				"G": {"frames": [6]},
-				"H": {"frames": [7]},
-				"I": {"frames": [8]},
-				"J": {"frames": [9]},
-				"K": {"frames": [10]},
-				"!": {"frames": [27]},
-				"L": {"frames": [11]},
-				"M": {"frames": [12]},
-				"N": {"frames": [13]},
-				"O": {"frames": [14]},
-				"P": {"frames": [15]},
-				"Q": {"frames": [16]},
-				"R": {"frames": [17]},
-				"S": {"frames": [18]},
-				"T": {"frames": [19]},
-				"?": {"frames": [28]},
-				"U": {"frames": [20]}
+			animations: {
+				V: { frames: [21] },
+				A: { frames: [0] },
+				",": { frames: [26] },
+				W: { frames: [22] },
+				B: { frames: [1] },
+				X: { frames: [23] },
+				C: { frames: [2] },
+				".": { frames: [29] },
+				Y: { frames: [24] },
+				D: { frames: [3] },
+				Z: { frames: [25] },
+				E: { frames: [4] },
+				F: { frames: [5] },
+				G: { frames: [6] },
+				H: { frames: [7] },
+				I: { frames: [8] },
+				J: { frames: [9] },
+				K: { frames: [10] },
+				"!": { frames: [27] },
+				L: { frames: [11] },
+				M: { frames: [12] },
+				N: { frames: [13] },
+				O: { frames: [14] },
+				P: { frames: [15] },
+				Q: { frames: [16] },
+				R: { frames: [17] },
+				S: { frames: [18] },
+				T: { frames: [19] },
+				"?": { frames: [28] },
+				U: { frames: [20] },
 			},
-			"frames": [
+			frames: [
 				[155, 2, 25, 41, 0, -10, -3],
 				[72, 2, 28, 43, 0, -8, -1],
 				[599, 2, 28, 38, 0, -8, -4],
@@ -687,8 +706,8 @@ describe("DisplayList", () => {
 				[953, 2, 9, 16, 0, -17, -29],
 				[140, 2, 11, 41, 0, -16, -1],
 				[223, 2, 26, 41, 0, -7, -1],
-				[966, 2, 9, 10, 0, -17, -31]
-			]
+				[966, 2, 9, 10, 0, -17, -31],
+			],
 		};
 		let img = new Canvas.Image();
 		img.onload = () => {
@@ -697,13 +716,18 @@ describe("DisplayList", () => {
 			let text = new BitmapText("abcdef\nghijklm\nnopqr\nstuvw\nxyz!,.?", ss);
 			stage.addChild(text);
 			stage.update();
-			globals.compareBaseLine(globals.rootPath + "tests/assets/BitmapText.png", done, expect, canvas);
+			globals.compareBaseLine(
+				globals.rootPath + "tests/assets/BitmapText.png",
+				done,
+				expect,
+				canvas
+			);
 		};
 		img.onerror = () => done(`${img.src} failed to load`);
 		img.src = globals.rootPath + "assets/art/spritesheet_font.png";
 	});
 
-	it("masks should work", done => {
+	it("masks should work", (done) => {
 		// masks can only be shapes.
 		let star = new Shape();
 
@@ -712,11 +736,17 @@ describe("DisplayList", () => {
 		star.y = image.height / 2;
 
 		// only the drawPolyStar call is needed for the mask to work:
-		star.graphics.beginStroke("#FF0").setStrokeStyle(3).drawPolyStar(0, 0, image.height / 2, 5, 0.6);
+		star.graphics
+			.beginStroke("#FF0")
+			.setStrokeStyle(3)
+			.drawPolyStar(0, 0, image.height / 2, 5, 0.6);
 
 		let bg = new Bitmap(image);
 		// blur and desaturate the background image:
-		bg.filters = [new BlurFilter(2, 2, 2), new ColorMatrixFilter(new ColorMatrix(0, 0, -100, 0))];
+		bg.filters = [
+			new BlurFilter(2, 2, 2),
+			new ColorMatrixFilter(new ColorMatrix(0, 0, -100, 0)),
+		];
 		bg.cache(0, 0, image.width, image.height);
 		stage.addChild(bg);
 
@@ -729,7 +759,12 @@ describe("DisplayList", () => {
 		stage.addChild(star);
 		stage.update();
 
-		globals.compareBaseLine(globals.rootPath + "tests/assets/mask.png", done, expect, canvas, 0.01);
+		globals.compareBaseLine(
+			globals.rootPath + "tests/assets/mask.png",
+			done,
+			expect,
+			canvas,
+			0.01
+		);
 	});
-
 });
